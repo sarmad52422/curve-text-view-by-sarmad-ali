@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main_sticker_container"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="#486A6A6A"
+    android:clipChildren="false">
+
+    <ImageView
+        android:id="@+id/button_remove"
+        android:layout_width="25dip"
+        android:layout_height="25dip"
+        android:layout_toEndOf="@+id/inner_layout"
+
+        android:src="@drawable/remove" />
+
+    <ImageView
+        android:id="@+id/button_front"
+        android:layout_width="25dip"
+        android:layout_height="25dip"
+
+        android:src="@drawable/switch_btn" />
+
+    <RelativeLayout
+        android:id="@+id/inner_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@+id/button_front"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:gravity="center"
+
+        android:orientation="vertical"
+        android:padding="8dip" />
+
+
+</RelativeLayout>
