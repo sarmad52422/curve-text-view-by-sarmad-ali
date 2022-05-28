@@ -42,6 +42,7 @@ public class MagicTextView extends View {
     private boolean isArcAngleChanged = false;
     private BlurMaskFilter.Blur blurMaskFilter = BlurMaskFilter.Blur.OUTER;
     private int screenWidth = 0;
+    private float totalScale;
     private String message = "Hemant Vitthalbhai Patel Android Developer at Office beacon, Vadodara";
     //        private String message ="Patel Android this is text ";
     private Path textPath;
@@ -89,7 +90,10 @@ public class MagicTextView extends View {
         requestLayout();
 
     }
+    public Paint getPaint(){
 
+        return mPaintText;
+    }
     public void setStrokeMask(Bitmap bitmap, int density) {
         if (bitmap == null) {
             strokePaint.setShader(null);
@@ -281,7 +285,7 @@ public class MagicTextView extends View {
 
 
             }
-            if(textWidth+110 >= screenWidth) {
+            if(textWidth+80 >= screenWidth) {
                 setTextSize(getTextSize()-10);
             }
 
@@ -292,7 +296,18 @@ public class MagicTextView extends View {
         requestLayout();
 
     }
+    public void setTotalScale(float x){
 
+
+        Rect bounds = new Rect();
+        int rndWidth = (int)(getWidth()+x);
+        mPaintText.getTextBounds(message, 0, message.length(), bounds);
+        float newTextSize = getTextSize()*rndWidth/bounds.width();
+//
+        getLayoutParams().width = rndWidth;
+        setTextSize((int)newTextSize);
+        requestLayout();
+    }
     /**
      * @param alignment current text alignment
      * @return X coordinates for text according to alignment

@@ -6,12 +6,15 @@ import android.graphics.Bitmap;
 import android.graphics.BlurMaskFilter;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
+
 import com.sarmad.stickerview.collageviews.MultiTouchListener;
 import com.sarmad.stickerview.util.MagicTextView;
 import com.sarmad.stickerview.util.Sticker;
@@ -25,7 +28,7 @@ public class StickerTextView extends Sticker {
     public static final Paint.Align LEFT = Paint.Align.LEFT;
     public static final Paint.Align RIGHT = Paint.Align.RIGHT;
 
-    private final View innerLayout;
+    private final View selectionWraperLayout;
     int currentFontStyle = Typeface.NORMAL;
     private final MagicTextView tv_main;
     private Rotate3dAnimation rotate3dAnimation;
@@ -33,28 +36,24 @@ public class StickerTextView extends Sticker {
     private StickerOperationListener stickerOperationListener;
     private boolean isLocked = false;
 
-
-
     public StickerTextView(Context context) {
         super(context);
-        innerLayout = ((LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.selection_wrraper, this, false);
+        selectionWraperLayout = ((LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.selection_wrraper, this, false);
         setClipChildren(false);
-
-
         tv_main = new MagicTextView(context);
+
         tv_main.setBlurMaskFilter(BlurMaskFilter.Blur.NORMAL);
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
         params.addRule(RelativeLayout.CENTER_IN_PARENT);
-        ((RelativeLayout) innerLayout.findViewById(R.id.inner_layout)).addView(tv_main, params);
-        innerLayout.findViewById(R.id.button_remove).setOnClickListener(view -> {
+        ((RelativeLayout) selectionWraperLayout.findViewById(R.id.inner_layout)).addView(tv_main, params);
+        selectionWraperLayout.findViewById(R.id.button_remove).setOnClickListener(view -> {
             ((ViewGroup) StickerTextView.this.getParent()).removeView(StickerTextView.this);
             stickerOperationListener.onStickerClosed(StickerTextView.this);
         });
-        innerLayout.findViewById(R.id.button_front).setOnClickListener(view -> StickerTextView.this.bringToFront());
+        selectionWraperLayout.findViewById(R.id.button_front).setOnClickListener(view -> StickerTextView.this.bringToFront());
+        this.addView(selectionWraperLayout);
 
-        this.addView(innerLayout);
-
-
+        selectionWraperLayout.findViewById(R.id.button_scale).setOnTouchListener(new TextScaleTouchListener());
         tv_main.setTextSize(50);
 
     }
@@ -62,7 +61,7 @@ public class StickerTextView extends Sticker {
     public StickerTextView(MagicTextView slogan) {
         super(slogan.getContext());
 
-        innerLayout = ((LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.selection_wrraper, this, false);
+        selectionWraperLayout = ((LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.selection_wrraper, this, false);
         setClipChildren(false);
 
 
@@ -74,22 +73,19 @@ public class StickerTextView extends Sticker {
         tv_main.setStrokeColor(slogan.getStrokeColor());
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
         params.addRule(RelativeLayout.CENTER_IN_PARENT);
-        ((RelativeLayout) innerLayout.findViewById(R.id.inner_layout)).addView(tv_main, params);
-        innerLayout.findViewById(R.id.button_remove).setOnClickListener(view -> {
+        ((RelativeLayout) selectionWraperLayout.findViewById(R.id.inner_layout)).addView(tv_main, params);
+        selectionWraperLayout.findViewById(R.id.button_remove).setOnClickListener(view -> {
             ((ViewGroup) StickerTextView.this.getParent()).removeView(StickerTextView.this);
             stickerOperationListener.onStickerClosed(StickerTextView.this);
         });
-        innerLayout.findViewById(R.id.button_front).setOnClickListener(view -> StickerTextView.this.bringToFront());
-        this.addView(innerLayout);
+        selectionWraperLayout.findViewById(R.id.button_front).setOnClickListener(view -> StickerTextView.this.bringToFront());
+        this.addView(selectionWraperLayout);
 
 
     }
-    public void setTextAlignment(Paint.Align alignment){
+
+    public void setTextAlignment(Paint.Align alignment) {
         tv_main.setTextAlignment(alignment);
-    }
-    @Override
-    public MagicTextView getMainView() {
-        return tv_main;
     }
 
 
@@ -109,9 +105,11 @@ public class StickerTextView extends Sticker {
     public void setMask(Bitmap bitmap, int density) {
         tv_main.setMask(bitmap, density);
     }
-    public void setBackgroundColor(int color){
-        innerLayout.setBackgroundColor(Color.TRANSPARENT);
+
+    public void setBackgroundColor(int color) {
+        selectionWraperLayout.setBackgroundColor(Color.TRANSPARENT);
     }
+
     @Override
     public void clearMask() {
 
@@ -139,6 +137,7 @@ public class StickerTextView extends Sticker {
         setControlsVisibility(true);
     }
 
+
     /**
      * return true if view is lock and false if not
      *
@@ -161,6 +160,11 @@ public class StickerTextView extends Sticker {
     @Override
     public int getXRotate() {
         return xRotate;
+    }
+
+    @Override
+    public View getMainView() {
+        return tv_main;
     }
 
     @Override
@@ -228,13 +232,13 @@ public class StickerTextView extends Sticker {
     public void setControlsVisibility(boolean isVisible) {
         if (!isVisible) {
 
-            innerLayout.findViewById(R.id.main_sticker_container).setBackground(new ColorDrawable(Color.TRANSPARENT));
-            innerLayout.findViewById(R.id.button_remove).setVisibility(View.INVISIBLE);
-            innerLayout.findViewById(R.id.button_front).setVisibility(INVISIBLE);
+            selectionWraperLayout.findViewById(R.id.main_sticker_container).setBackground(new ColorDrawable(Color.TRANSPARENT));
+            selectionWraperLayout.findViewById(R.id.button_remove).setVisibility(View.INVISIBLE);
+            selectionWraperLayout.findViewById(R.id.button_front).setVisibility(INVISIBLE);
         } else {
-            innerLayout.findViewById(R.id.main_sticker_container).setBackgroundResource(R.drawable.border_sticker);
-            innerLayout.findViewById(R.id.button_remove).setVisibility(View.VISIBLE);
-            innerLayout.findViewById(R.id.button_front).setVisibility(View.VISIBLE);
+            selectionWraperLayout.findViewById(R.id.main_sticker_container).setBackgroundResource(R.drawable.border_sticker);
+            selectionWraperLayout.findViewById(R.id.button_remove).setVisibility(View.VISIBLE);
+            selectionWraperLayout.findViewById(R.id.button_front).setVisibility(View.VISIBLE);
 
         }
 
@@ -295,6 +299,7 @@ public class StickerTextView extends Sticker {
         tv_main.setTextColor(color);
     }
 
+
     @Override
     public void setStrokeMask(Bitmap item, int density) {
         tv_main.setStrokeMask(item, density);
@@ -338,4 +343,62 @@ public class StickerTextView extends Sticker {
     public float getTextWidth() {
         return tv_main.getTextWidth();
     }
+
+
+    private class TextScaleTouchListener implements OnTouchListener {
+        float orgX = 0.0f;
+        float orgY = 0.0f;
+        float scaleFactor = 0.0f;
+        Rect textBounds = new Rect();
+        int widthPixels = 0;
+        int rndWidth = 0;
+        int rndHeight = 0;
+        View inLayout;
+
+        public TextScaleTouchListener() {
+
+            widthPixels = getContext().getResources().getDisplayMetrics().widthPixels;
+        }
+
+        @Override
+        public boolean onTouch(View view, MotionEvent motionEvent) {
+            switch (motionEvent.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    this.orgX = motionEvent.getX();
+                    this.orgY = motionEvent.getY();
+                    scaleFactor = tv_main.getScaleX();
+                    inLayout = selectionWraperLayout.findViewById(R.id.main_sticker_container);
+                    break;
+                case MotionEvent.ACTION_MOVE & MotionEvent.ACTION_MASK:
+
+//                    if (motionEvent.getX() >= orgX && tv_main.getWidth() < (widthPixels-200)) {
+//                        scaleFactor = motionEvent.getX();
+//                        Log.e("INCREASE", "Original X = " + orgX + "   Event X = " + motionEvent.getX());
+//                        orgX = motionEvent.getX();
+//                        tv_main.setTotalScale(scaleFactor);
+//
+//                    }
+//                    else if (motionEvent.getX() <= orgX+100 && tv_main.getWidth() > (widthPixels / 3)) {
+//                        orgX = motionEvent.getX();
+//                        tv_main.setTotalScale(scaleFactor);
+//
+//                    }
+                    if ((tv_main.getWidth() + motionEvent.getX() <= widthPixels - 200) &&
+                            (tv_main.getWidth() + motionEvent.getX() >= (float) (widthPixels / 3))) {
+                        scaleFactor = motionEvent.getX();
+                        tv_main.setTotalScale(scaleFactor);
+                    }
+                    break;
+                case MotionEvent.ACTION_UP:
+                    if (tv_main.getWidth() >= widthPixels - 200)
+
+                        break;
+
+
+            }
+
+            return true;
+        }
+    }
+
 }

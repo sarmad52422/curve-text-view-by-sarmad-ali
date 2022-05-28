@@ -25,7 +25,7 @@ public abstract class StickerView extends Sticker {
 
     public static final String TAG = "com.knef.stickerView";
     private final static int BUTTON_SIZE_DP = 30;
-    private final static int SELF_SIZE_DP = 100;
+    public final static int SELF_SIZE_DP = 100;
     ScaleCallBack scaleCallBack;
     private BorderView iv_border;
     private ImageView iv_scale;
@@ -208,7 +208,7 @@ public abstract class StickerView extends Sticker {
 
     }
 
-    private static int convertDpToPixel(float dp, Context context) {
+    public static int convertDpToPixel(float dp, Context context) {
         Resources resources = context.getResources();
         DisplayMetrics metrics = resources.getDisplayMetrics();
         float px = dp * (metrics.densityDpi / 160f);
@@ -313,8 +313,10 @@ public abstract class StickerView extends Sticker {
 
         this.setLayoutParams(this_params);
         View mainView = getMainView();
-        mainView.setPadding(20, 20, 20, 20);
-        this.addView(mainView, iv_main_params);
+        if(mainView != null) {
+            mainView.setPadding(20, 20, 20, 20);
+            this.addView(mainView, iv_main_params);
+        }
         this.addView(iv_border, iv_border_params);
         this.addView(iv_scale, iv_scale_params);
         this.addView(iv_delete, iv_delete_params);
