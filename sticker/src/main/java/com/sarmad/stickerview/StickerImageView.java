@@ -38,6 +38,37 @@ public class StickerImageView extends StickerView implements StickerView.ScaleCa
 
 
     }
+    public void setMask(Bitmap maskBitmap){
+        this.iv_main.setColorFilter(0); // if color filter is applied mask will not work removing color filter here if any applied
+        if(imgResourcesID == 0 && this.originalBitmap == null)
+            return;
+        Bitmap orginalCopy = null;
+        if(this.originalBitmap == null){
+            orginalCopy = BitmapFactory.decodeResource(getResources(),imgResourcesID);
+        }
+        else{
+            orginalCopy = Bitmap.createBitmap(originalBitmap);
+        }
+
+        Bitmap mask = Bitmap.createBitmap(orginalCopy.getWidth(),orginalCopy.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(mask);
+        //mask paint
+        Paint maskPaint = new Paint();
+        maskPaint.setAntiAlias(true);
+        maskPaint.setShader(new BitmapShader(maskBitmap, Shader.TileMode.MIRROR, Shader.TileMode.MIRROR));
+        // image paint
+        Paint imagePaint = new Paint();
+        imagePaint.setAntiAlias(true);
+        imagePaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
+
+        canvas.drawRect(0,0,orginalCopy.getWidth(),orginalCopy.getHeight(),maskPaint);
+        canvas.drawBitmap(orginalCopy,0f,0f,imagePaint);
+
+
+        this.iv_main.setImageBitmap(mask);
+
+    }
+
     @Override
     public void setXRotate(int xRotate) {
 

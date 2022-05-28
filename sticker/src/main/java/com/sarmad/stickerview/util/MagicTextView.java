@@ -29,7 +29,6 @@ public class MagicTextView extends View {
     private final Rect textBounds;
     private final Paint boxPaint;
     private final RectF boxRect;
-    private final float vOffset = 0f;
     private float textSize = 0.0f;
     private int mRadius = 0;
     private int width = 0;
@@ -42,7 +41,8 @@ public class MagicTextView extends View {
     private boolean isArcAngleChanged = false;
     private BlurMaskFilter.Blur blurMaskFilter = BlurMaskFilter.Blur.OUTER;
     private int screenWidth = 0;
-    private float totalScale;
+
+    private int currentStyle = Typeface.NORMAL;
     private String message = "Hemant Vitthalbhai Patel Android Developer at Office beacon, Vadodara";
     //        private String message ="Patel Android this is text ";
     private Path textPath;
@@ -334,7 +334,28 @@ public class MagicTextView extends View {
         return size;
 
     }
+    public void setTextStyle(int style) {
+        if(currentStyle == Typeface.BOLD && style == Typeface.ITALIC){
+            mPaintText.setTypeface(Typeface.create(mPaintText.getTypeface(), Typeface.BOLD_ITALIC));
+            currentStyle = Typeface.BOLD_ITALIC;
 
+        }
+        else if(currentStyle == Typeface.ITALIC && style == Typeface.BOLD){
+            mPaintText.setTypeface(Typeface.create(mPaintText.getTypeface(), Typeface.BOLD_ITALIC));
+            currentStyle = Typeface.BOLD_ITALIC;
+
+
+        }
+        else if (currentStyle == Typeface.ITALIC || currentStyle == Typeface.BOLD || currentStyle == Typeface.BOLD_ITALIC) {
+            mPaintText.setTypeface(Typeface.create(mPaintText.getTypeface(), Typeface.NORMAL));
+            currentStyle = Typeface.NORMAL;
+        }
+        else {
+            mPaintText.setTypeface(Typeface.create(mPaintText.getTypeface(), style));
+            currentStyle = style;
+        }
+
+    }
     public void setStroke(int strokeWidth) {
         if (strokeWidth >= 1) {
             this.strokeWidth = strokeWidth;

@@ -27,7 +27,7 @@ public class StickerTextView extends Sticker {
     public static final Paint.Align CENTER = Paint.Align.CENTER;
     public static final Paint.Align LEFT = Paint.Align.LEFT;
     public static final Paint.Align RIGHT = Paint.Align.RIGHT;
-
+    private int archRadius = 370; // center no arch left or right!!!
     private final View selectionWraperLayout;
     int currentFontStyle = Typeface.NORMAL;
     private final MagicTextView tv_main;
@@ -35,6 +35,7 @@ public class StickerTextView extends Sticker {
     private int xRotate, yRotate, zRotate;
     private StickerOperationListener stickerOperationListener;
     private boolean isLocked = false;
+    private int currentShadowModeCode = 10501;
 
     public StickerTextView(Context context) {
         super(context);
@@ -243,6 +244,12 @@ public class StickerTextView extends Sticker {
         }
 
     }
+    public int getCurrentShadowModeCode(){
+        return currentShadowModeCode;
+    }
+    public void setCurrentShadowModeCode(int code){
+        this.currentShadowModeCode = code;
+    }
 
     @Override
     public float getAlpha() {
@@ -259,12 +266,12 @@ public class StickerTextView extends Sticker {
 //        return tv_main.getOffset();
         return 0;
     }
+    public void setTextStyle(int style){
+        tv_main.setTextStyle(style);
+    }
 
     public void setTypeface(Typeface typeface) {
-        if (currentFontStyle != Typeface.NORMAL)
-            tv_main.setTypeFace(typeface);
-        else
-            tv_main.setTypeFace(typeface);
+        tv_main.setTypeFace(typeface);
 
     }
 
@@ -276,7 +283,11 @@ public class StickerTextView extends Sticker {
             tv_main.setArchRadius(-8);
             tv_main.disableArch();
         }
+        archRadius = radius;
 
+    }
+    public int getArchAngle(){
+        return archRadius;
     }
 
     @Override
@@ -370,21 +381,8 @@ public class StickerTextView extends Sticker {
                     inLayout = selectionWraperLayout.findViewById(R.id.main_sticker_container);
                     break;
                 case MotionEvent.ACTION_MOVE & MotionEvent.ACTION_MASK:
-
-//                    if (motionEvent.getX() >= orgX && tv_main.getWidth() < (widthPixels-200)) {
-//                        scaleFactor = motionEvent.getX();
-//                        Log.e("INCREASE", "Original X = " + orgX + "   Event X = " + motionEvent.getX());
-//                        orgX = motionEvent.getX();
-//                        tv_main.setTotalScale(scaleFactor);
-//
-//                    }
-//                    else if (motionEvent.getX() <= orgX+100 && tv_main.getWidth() > (widthPixels / 3)) {
-//                        orgX = motionEvent.getX();
-//                        tv_main.setTotalScale(scaleFactor);
-//
-//                    }
                     if ((tv_main.getWidth() + motionEvent.getX() <= widthPixels - 200) &&
-                            (tv_main.getWidth() + motionEvent.getX() >= (float) (widthPixels / 3))) {
+                            (tv_main.getWidth() + motionEvent.getX() >= (float) (widthPixels / 4))) {
                         scaleFactor = motionEvent.getX();
                         tv_main.setTotalScale(scaleFactor);
                     }
