@@ -1,9 +1,11 @@
 package com.sarmad.stickerview.util;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BlurMaskFilter;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.FrameLayout;
 
@@ -90,5 +92,9 @@ public abstract class Sticker extends FrameLayout {
     public int getShadowStrokeWidth() {
         Log.e("STICKER","getStrokeWidth only supported for textview");
         return -1;
+    }
+    public static float convertDpToPixel(float dp, Resources r){
+
+        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,dp,r.getDisplayMetrics());
     }
 }

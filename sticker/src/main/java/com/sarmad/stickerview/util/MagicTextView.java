@@ -14,8 +14,6 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.graphics.Region;
-import android.graphics.RegionIterator;
 import android.graphics.Shader;
 import android.graphics.Typeface;
 import android.util.DisplayMetrics;
@@ -41,7 +39,7 @@ public class MagicTextView extends View {
     private boolean isArcAngleChanged = false;
     private BlurMaskFilter.Blur blurMaskFilter = BlurMaskFilter.Blur.OUTER;
     private int screenWidth = 0;
-
+    private boolean isViewFirstTimeAdded = false;
     private int currentStyle = Typeface.NORMAL;
     private String message = "Hemant Vitthalbhai Patel Android Developer at Office beacon, Vadodara";
     //        private String message ="Patel Android this is text ";
@@ -51,6 +49,7 @@ public class MagicTextView extends View {
     public MagicTextView(Context context) {
         super(context);
         textBounds = new Rect();
+        isViewFirstTimeAdded = true;
 //        setBackgroundColor(Color.YELLOW);
         mPaintText = new Paint(Paint.ANTI_ALIAS_FLAG);
         strokePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -90,10 +89,12 @@ public class MagicTextView extends View {
         requestLayout();
 
     }
-    public Paint getPaint(){
+
+    public Paint getPaint() {
 
         return mPaintText;
     }
+
     public void setStrokeMask(Bitmap bitmap, int density) {
         if (bitmap == null) {
             strokePaint.setShader(null);
@@ -151,8 +152,12 @@ public class MagicTextView extends View {
 
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-
-
+        if(getWidth() > screenWidth-Sticker.convertDpToPixel(70,getResources()) && isViewFirstTimeAdded) { // if view is added first time then adjust the view height according to screen width
+         setTextSize(getTextSize()-1); // this will call on draw until the text size is set according to screen
+        }
+        else{
+            isViewFirstTimeAdded = false;
+        }
 
         int textHeight = 0;
         int textWidth = 0;
@@ -212,21 +217,20 @@ public class MagicTextView extends View {
 
 
             innerOffsetX = (((float) (getWidth() - baseWidth)) * 0.5f) * scale;
-            innerOffsetY = 0;
 
             textOffsetX += (int) innerOffsetX;
-            textOffsetY += (int) innerOffsetY;
+
 
             float left = ((float) textOffsetX) + (((totalWidth - (2.0f * innerOffsetX)) - diameter) / 2.0f);
             float top = (float) textOffsetY;
             if (aCurvingAngle > 0) {
                 startAngle = 270;
-                top+=30;
+                top += 30;
                 diffLeftCurve = 48;
 
             } else {
                 diffLeftCurve = 0;
-                top += (((float) getHeight()) - innerOffsetY) - diameter; // left curve ok
+                top += (((float) getHeight())) - diameter; // left curve ok
                 if (mPaintText.getStrokeWidth() > 0.0f) {
                     top -= mPaintText.getStrokeWidth();
                 }
@@ -234,7 +238,6 @@ public class MagicTextView extends View {
                 startAngle = 90;
             }
             this.textPath.reset();
-
 
 
             this.textPath.addArc(left, top, left + diameter, top + diameter, (startAngle - (aCurvingAngle / 2f)), (float) aCurvingAngle);
@@ -250,7 +253,7 @@ public class MagicTextView extends View {
 
             canvas.drawTextOnPath(t, this.textPath, hOffset, 0.0f, mPaintText);
 
-            textHeight = (int) boxRect.height()+diffLeftCurve;
+            textHeight = (int) boxRect.height() + diffLeftCurve;
             textWidth = (int) Math.abs(boxRect.width()) + 10;
 
 
@@ -285,29 +288,32 @@ public class MagicTextView extends View {
 
 
             }
-            if(textWidth+80 >= screenWidth) {
-                setTextSize(getTextSize()-10);
-            }
+
 
         }
 
-        getLayoutParams().width = textWidth + 5;
+        getLayoutParams().width = textWidth;
         getLayoutParams().height = textHeight;
         requestLayout();
 
+
+
+
     }
-    public void setTotalScale(float x){
 
+    public void setTotalScale(float x) {
 
+        String text = getLongestLine(); // calculate the scale on the according to the longest line in text
         Rect bounds = new Rect();
-        int rndWidth = (int)(getWidth()+x);
-        mPaintText.getTextBounds(message, 0, message.length(), bounds);
-        float newTextSize = getTextSize()*rndWidth/bounds.width();
+        int rndWidth = (int) (getWidth() + x);
+        mPaintText.getTextBounds(text, 0, text.length(), bounds);
+        float newTextSize = getTextSize() * rndWidth / bounds.width();
 //
         getLayoutParams().width = rndWidth;
-        setTextSize((int)newTextSize);
+        setTextSize((int) newTextSize);
         requestLayout();
     }
+
     /**
      * @param alignment current text alignment
      * @return X coordinates for text according to alignment
@@ -316,46 +322,55 @@ public class MagicTextView extends View {
         return alignment == Paint.Align.CENTER ? getWidth() / 2f : alignment == Paint.Align.RIGHT ? getWidth() : 0;
     }
 
-    private int calculateArea(Region region) {
-
-        RegionIterator regionIterator = new RegionIterator(region);
-
-        int size = 0; // amount of Rects
-        float area = 0; // units of area
-
-        Rect tmpRect = new Rect();
-
-        while (regionIterator.next(tmpRect)) {
-            size++;
-            area = tmpRect.height();
+    private String getLongestLine() {
+        String[] lines = message.split("\n");
+        String longestLine = lines[0];
+        for (String line : lines) {
+            if (line.length() > longestLine.length()) {
+                longestLine = line;
+            }
         }
-        Log.e("Rect amount=", +size + "");
-        Log.d("units of area=", +area + "");
-        return size;
-
+        return longestLine;
     }
+
+    //    private int calculateArea(Region region) {
+//
+//        RegionIterator regionIterator = new RegionIterator(region);
+//
+//        int size = 0; // amount of Rects
+//        float area = 0; // units of area
+//
+//        Rect tmpRect = new Rect();
+//
+//        while (regionIterator.next(tmpRect)) {
+//            size++;
+//            area = tmpRect.height();
+//        }
+//        Log.e("Rect amount=", +size + "");
+//        Log.d("units of area=", +area + "");
+//        return size;
+//
+//    }
     public void setTextStyle(int style) {
-        if(currentStyle == Typeface.BOLD && style == Typeface.ITALIC){
+        if (currentStyle == Typeface.BOLD && style == Typeface.ITALIC) {
             mPaintText.setTypeface(Typeface.create(mPaintText.getTypeface(), Typeface.BOLD_ITALIC));
             currentStyle = Typeface.BOLD_ITALIC;
 
-        }
-        else if(currentStyle == Typeface.ITALIC && style == Typeface.BOLD){
+        } else if (currentStyle == Typeface.ITALIC && style == Typeface.BOLD) {
             mPaintText.setTypeface(Typeface.create(mPaintText.getTypeface(), Typeface.BOLD_ITALIC));
             currentStyle = Typeface.BOLD_ITALIC;
 
 
-        }
-        else if (currentStyle == Typeface.ITALIC || currentStyle == Typeface.BOLD || currentStyle == Typeface.BOLD_ITALIC) {
+        } else if (currentStyle == Typeface.ITALIC || currentStyle == Typeface.BOLD || currentStyle == Typeface.BOLD_ITALIC) {
             mPaintText.setTypeface(Typeface.create(mPaintText.getTypeface(), Typeface.NORMAL));
             currentStyle = Typeface.NORMAL;
-        }
-        else {
+        } else {
             mPaintText.setTypeface(Typeface.create(mPaintText.getTypeface(), style));
             currentStyle = style;
         }
 
     }
+
     public void setStroke(int strokeWidth) {
         if (strokeWidth >= 1) {
             this.strokeWidth = strokeWidth;

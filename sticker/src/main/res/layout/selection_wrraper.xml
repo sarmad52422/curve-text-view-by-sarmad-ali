@@ -40,17 +40,19 @@
         android:layout_height="20dip"
         android:src="@drawable/remove"
         app:layout_constraintBottom_toTopOf="@+id/inner_layout"
-        app:layout_constraintStart_toEndOf="@+id/inner_layout" />
+        app:layout_constraintStart_toEndOf="@+id/inner_layout"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
     <ImageView
         android:id="@+id/button_scale"
-        android:layout_width="15dip"
-        android:layout_height="15dip"
-        android:layout_alignParentBottom="true"
+        android:layout_width="20dip"
+        android:layout_height="20dip"
         android:src="@drawable/zoominout"
         android:tag="iv_scale"
         app:layout_constraintStart_toEndOf="@id/inner_layout"
-        app:layout_constraintTop_toBottomOf="@+id/inner_layout" />
+        app:layout_constraintTop_toBottomOf="@+id/inner_layout"
+        app:layout_constraintEnd_toEndOf="parent"
+/>
 <!--    android:background="#486A6A6A"-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

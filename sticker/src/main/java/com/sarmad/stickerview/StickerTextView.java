@@ -6,9 +6,9 @@ import android.graphics.Bitmap;
 import android.graphics.BlurMaskFilter;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -53,9 +53,9 @@ public class StickerTextView extends Sticker {
         });
         selectionWraperLayout.findViewById(R.id.button_front).setOnClickListener(view -> StickerTextView.this.bringToFront());
         this.addView(selectionWraperLayout);
-
+        tv_main.setTextSize(40);
         selectionWraperLayout.findViewById(R.id.button_scale).setOnTouchListener(new TextScaleTouchListener());
-        tv_main.setTextSize(50);
+
 
     }
 
@@ -236,18 +236,22 @@ public class StickerTextView extends Sticker {
             selectionWraperLayout.findViewById(R.id.main_sticker_container).setBackground(new ColorDrawable(Color.TRANSPARENT));
             selectionWraperLayout.findViewById(R.id.button_remove).setVisibility(View.INVISIBLE);
             selectionWraperLayout.findViewById(R.id.button_front).setVisibility(INVISIBLE);
+            selectionWraperLayout.findViewById(R.id.button_scale).setVisibility(INVISIBLE);
         } else {
             selectionWraperLayout.findViewById(R.id.main_sticker_container).setBackgroundResource(R.drawable.border_sticker);
             selectionWraperLayout.findViewById(R.id.button_remove).setVisibility(View.VISIBLE);
             selectionWraperLayout.findViewById(R.id.button_front).setVisibility(View.VISIBLE);
+            selectionWraperLayout.findViewById(R.id.button_scale).setVisibility(View.VISIBLE);
 
         }
 
     }
-    public int getCurrentShadowModeCode(){
+
+    public int getCurrentShadowModeCode() {
         return currentShadowModeCode;
     }
-    public void setCurrentShadowModeCode(int code){
+
+    public void setCurrentShadowModeCode(int code) {
         this.currentShadowModeCode = code;
     }
 
@@ -266,7 +270,8 @@ public class StickerTextView extends Sticker {
 //        return tv_main.getOffset();
         return 0;
     }
-    public void setTextStyle(int style){
+
+    public void setTextStyle(int style) {
         tv_main.setTextStyle(style);
     }
 
@@ -286,7 +291,8 @@ public class StickerTextView extends Sticker {
         archRadius = radius;
 
     }
-    public int getArchAngle(){
+
+    public int getArchAngle() {
         return archRadius;
     }
 
@@ -359,11 +365,7 @@ public class StickerTextView extends Sticker {
     private class TextScaleTouchListener implements OnTouchListener {
         float orgX = 0.0f;
         float orgY = 0.0f;
-        float scaleFactor = 0.0f;
-        Rect textBounds = new Rect();
-        int widthPixels = 0;
-        int rndWidth = 0;
-        int rndHeight = 0;
+        int widthPixels;
         View inLayout;
 
         public TextScaleTouchListener() {
@@ -377,25 +379,22 @@ public class StickerTextView extends Sticker {
                 case MotionEvent.ACTION_DOWN:
                     this.orgX = motionEvent.getX();
                     this.orgY = motionEvent.getY();
-                    scaleFactor = tv_main.getScaleX();
                     inLayout = selectionWraperLayout.findViewById(R.id.main_sticker_container);
-                    break;
-                case MotionEvent.ACTION_MOVE & MotionEvent.ACTION_MASK:
-                    if ((tv_main.getWidth() + motionEvent.getX() <= widthPixels - 200) &&
-                            (tv_main.getWidth() + motionEvent.getX() >= (float) (widthPixels / 4))) {
-                        scaleFactor = motionEvent.getX();
-                        tv_main.setTotalScale(scaleFactor);
-                    }
-                    break;
-                case MotionEvent.ACTION_UP:
-                    if (tv_main.getWidth() >= widthPixels - 200)
+                    return true;
+                case MotionEvent.ACTION_MOVE:
 
-                        break;
+                    if (tv_main.getWidth() + motionEvent.getX() >= widthPixels - Sticker.convertDpToPixel(80,getResources())) {
+                        return false;
+                    } else if (tv_main.getWidth() + motionEvent.getX() <100) {
+                        return false;
+                    }
+
+                    tv_main.setTotalScale(motionEvent.getX());
 
 
             }
 
-            return true;
+            return false;
         }
     }
 
