@@ -1,5 +1,7 @@
 package com.sarmad.stickerview.collageviews;
 
+import android.content.Context;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
@@ -20,10 +22,12 @@ public class MultiTouchListener implements OnTouchListener {
     private float mPrevX;
     private float mPrevY;
 //    private ScaleGestureDetector mScaleGestureDetector;
-    private StickerOperationListener stickerOperationListener;
-    public MultiTouchListener(StickerOperationListener evnt) {
+    private final StickerOperationListener stickerOperationListener;
+    private GestureDetector gestureDetector;
+    public MultiTouchListener(StickerOperationListener evnt, Context context) {
 //        mScaleGestureDetector = new ScaleGestureDetector(new ScaleGestureListener());
         stickerOperationListener = evnt;
+        gestureDetector = new GestureDetector(context, new GestureListener());
     }
 
 //    private static float adjustAngle(float degrees) {
@@ -80,7 +84,7 @@ public class MultiTouchListener implements OnTouchListener {
 
     @Override
     public boolean onTouch(View view, MotionEvent event) {
-//        mScaleGestureDetector.onTouchEvent(view, event);
+        gestureDetector.onTouchEvent(event);
 
         if (!isTranslateEnabled) {
             return true;
@@ -143,6 +147,14 @@ public class MultiTouchListener implements OnTouchListener {
 
         return true;
     }
+    private class GestureListener extends GestureDetector.SimpleOnGestureListener{
+        @Override
+        public boolean onDoubleTap(MotionEvent e) {
+            stickerOperationListener.onStickerDoubleTapped();
+            return true;
+        }
 
+
+    }
 
 }

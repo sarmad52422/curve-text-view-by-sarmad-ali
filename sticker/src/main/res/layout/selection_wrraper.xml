@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main_sticker_container"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
 
-    android:background="#4A787878"
+    android:background="@color/selection_color"
     android:clipChildren="false"
     android:clipToPadding="false">
 
@@ -18,26 +18,23 @@
         android:layout_height="20dip"
         android:src="@drawable/switch_btn"
         app:layout_constraintStart_toStartOf="parent"
-
         app:layout_constraintTop_toTopOf="parent" />
 
     <RelativeLayout
         android:id="@+id/inner_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-
+        android:padding="20dip"
         android:clipChildren="false"
         android:clipToPadding="false"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:padding="10dip"
-        app:layout_constraintStart_toEndOf="@+id/button_front"
-        app:layout_constraintTop_toBottomOf="@+id/button_front" />
+        android:layout_gravity="center"
+        />
 
     <ImageView
         android:id="@+id/button_remove"
         android:layout_width="20dip"
         android:layout_height="20dip"
+        android:layout_gravity="end"
         android:src="@drawable/remove"
         app:layout_constraintBottom_toTopOf="@+id/inner_layout"
         app:layout_constraintStart_toEndOf="@+id/inner_layout"
@@ -46,6 +43,7 @@
     <ImageView
         android:id="@+id/button_scale"
         android:layout_width="20dip"
+        android:layout_gravity="bottom|end"
         android:layout_height="20dip"
         android:src="@drawable/zoominout"
         android:tag="iv_scale"
@@ -55,4 +53,4 @@
 />
 <!--    android:background="#486A6A6A"-->
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</FrameLayout>

@@ -20,6 +20,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.sarmad.stickerview.util.Sticker;
+
 
 public class StickerImageView extends StickerView implements StickerView.ScaleCallBack {
     private String owner_id;
@@ -29,6 +31,7 @@ public class StickerImageView extends StickerView implements StickerView.ScaleCa
     Bitmap maskBitmap;
     private Rotate3dAnimation rotate3dAnimation;
     private int xRotate, yRotate, zRotate;
+    private int colorFilter = Color.TRANSPARENT;
 
     public StickerImageView(Context context) {
         super(context);
@@ -37,6 +40,31 @@ public class StickerImageView extends StickerView implements StickerView.ScaleCa
 
 
 
+    }
+    public StickerImageView(StickerImageView sticker,Context iContext) {
+        super(iContext);
+        setAlpha(sticker.getAlpha());
+        setImageBitmap(sticker.getBitmap());
+        setXRotate(sticker.getXRotate());
+        setYRotate(sticker.getYRotate());
+        setZRotate(sticker.getZRotate());
+        setColorFilter(sticker.getColorFilter());
+        if(sticker.getMask() != null){
+            setMask(sticker.getMask());
+        }
+        setScaleCallBackListener(this);
+        setClipChildren(false);
+        getMainView().invalidate();
+    }
+    public int getColorFilter(){
+        return colorFilter;
+    }
+
+    public Bitmap getMask(){
+        return maskBitmap;
+    }
+    public Bitmap getBitmap(){
+        return originalBitmap;
     }
     public void setMask(Bitmap maskBitmap){
         this.iv_main.setColorFilter(0); // if color filter is applied mask will not work removing color filter here if any applied
@@ -64,7 +92,7 @@ public class StickerImageView extends StickerView implements StickerView.ScaleCa
         canvas.drawRect(0,0,orginalCopy.getWidth(),orginalCopy.getHeight(),maskPaint);
         canvas.drawBitmap(orginalCopy,0f,0f,imagePaint);
 
-
+        this.maskBitmap = mask;
         this.iv_main.setImageBitmap(mask);
 
     }
@@ -117,6 +145,7 @@ public class StickerImageView extends StickerView implements StickerView.ScaleCa
     public void clearMask(){
         Log.e("ORG","MASK CLEAR");
         setImageBitmap(originalBitmap);
+        this.maskBitmap = null;
 
     }
 
@@ -234,6 +263,9 @@ public class StickerImageView extends StickerView implements StickerView.ScaleCa
     }
     public void setColorFilter(int color){
         iv_main.setColorFilter(color);
+        this.colorFilter = color;
+        this.maskBitmap = null;
+
     }
 
     @Override

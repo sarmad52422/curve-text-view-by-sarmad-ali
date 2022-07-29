@@ -80,6 +80,7 @@ public class MagicTextView extends View {
     public void setMask(Bitmap bitmap, int density) {
         if (bitmap == null) {
             mPaintText.setShader(null);
+
         } else {
             Bitmap scaleBitmap = Bitmap.createScaledBitmap(bitmap, bitmap.getWidth() / density, bitmap.getHeight() / density, false);
             Shader shader = new BitmapShader(scaleBitmap, Shader.TileMode.REPEAT, Shader.TileMode.REPEAT);
@@ -291,7 +292,11 @@ public class MagicTextView extends View {
 
 
         }
-
+//        if(screenWidth <= textWidth) {
+//            Log. e("Out oF bounds",textWidth+"    "+screenWidth);
+//            textWidth = screenWidth-80;
+//
+//        }
         getLayoutParams().width = textWidth;
         getLayoutParams().height = textHeight;
         requestLayout();
@@ -309,7 +314,7 @@ public class MagicTextView extends View {
         mPaintText.getTextBounds(text, 0, text.length(), bounds);
         float newTextSize = getTextSize() * rndWidth / bounds.width();
 //
-        getLayoutParams().width = rndWidth;
+//        getLayoutParams().width = rndWidth;
         setTextSize((int) newTextSize);
         requestLayout();
     }

@@ -7,6 +7,7 @@ public interface StickerOperationListener {
 
 
     void onStickerSelected(Sticker stickerView);
-    void onStickerClosed(Sticker stickerView);
+    void onStickerRemoved(Sticker stickerView);
     void onStickerDragged(Sticker sticker,int state);
+    void onStickerDoubleTapped();
 }
