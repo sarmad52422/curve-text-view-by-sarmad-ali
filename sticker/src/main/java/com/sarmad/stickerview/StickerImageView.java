@@ -301,4 +301,10 @@ public class StickerImageView extends StickerView implements StickerView.ScaleCa
         canvas.drawBitmap(originalBitmap, borderSize, borderSize, null);
         setImageBitmap(bmpWithBorder);
     }
+    public void setSize(int width,int height){
+        iv_main.getLayoutParams().width = width;
+        iv_main.getLayoutParams().height = height;
+        iv_main.requestLayout();
+        super.setStickerSize(width,height);
+    }
 }

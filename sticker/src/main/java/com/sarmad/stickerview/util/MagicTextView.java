@@ -17,13 +17,13 @@ import android.graphics.RectF;
 import android.graphics.Shader;
 import android.graphics.Typeface;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.View;
 
 public class MagicTextView extends View {
     private final Paint mPaintText;
     private final Paint strokePaint;
     private final Paint shadowPaint;
+    private final Paint backgroundPaint;
     private final Rect textBounds;
     private final Paint boxPaint;
     private final RectF boxRect;
@@ -32,7 +32,7 @@ public class MagicTextView extends View {
     private int width = 0;
     private int shadowRadius = 1;
     private int diffLeftCurve = 0;
-    private int color = Color.BLACK;
+//    private int color = Color.BLACK;
     private int strokeWidth = 0;
     private int shadowColor = Color.WHITE;
     private int strokeColor = Color.WHITE;
@@ -54,6 +54,8 @@ public class MagicTextView extends View {
         mPaintText = new Paint(Paint.ANTI_ALIAS_FLAG);
         strokePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         shadowPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        backgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        backgroundPaint.setColor(Color.TRANSPARENT);
         boxPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         boxPaint.setColor(Color.TRANSPARENT);
         mPaintText.setAntiAlias(true);
@@ -134,7 +136,7 @@ public class MagicTextView extends View {
     }
 
     public void setTextColor(int color) {
-        this.color = color;
+//        this.color = color;
         mPaintText.setColor(color);
 
     }
@@ -153,10 +155,9 @@ public class MagicTextView extends View {
 
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        if(getWidth() > screenWidth-Sticker.convertDpToPixel(70,getResources()) && isViewFirstTimeAdded) { // if view is added first time then adjust the view height according to screen width
-         setTextSize(getTextSize()-1); // this will call on draw until the text size is set according to screen
-        }
-        else{
+        if (getWidth() > screenWidth - Sticker.convertDpToPixel(70, getResources()) && isViewFirstTimeAdded) { // if view is added first time then adjust the view height according to screen width
+            setTextSize(getTextSize() - 1); // this will call on draw until the text size is set according to screen
+        } else {
             isViewFirstTimeAdded = false;
         }
 
@@ -243,10 +244,8 @@ public class MagicTextView extends View {
 
             this.textPath.addArc(left, top, left + diameter, top + diameter, (startAngle - (aCurvingAngle / 2f)), (float) aCurvingAngle);
             textPath.computeBounds(boxRect, true);
-
-
             canvas.drawRect(boxRect, boxPaint);
-
+            canvas.drawRect(boxRect,backgroundPaint);
             if (strokeWidth >= 2)
                 canvas.drawTextOnPath(t, this.textPath, hOffset, 0.0f, strokePaint);
             if (shadowStrokeWidth >= 2)
@@ -260,6 +259,7 @@ public class MagicTextView extends View {
 
         } else {
 
+            canvas.drawRect(getActualTextWidth(), backgroundPaint);
             float y = 0;
             if (message.contains("\n")) { // if there are multiple lines then do not draw first line in center becuase if first lines is drawn in center other lines will go below cause one line blank space at the top so draw from start
                 y = mPaintText.getTextSize();
@@ -297,12 +297,41 @@ public class MagicTextView extends View {
 //            textWidth = screenWidth-80;
 //
 //        }
+
         getLayoutParams().width = textWidth;
         getLayoutParams().height = textHeight;
+
         requestLayout();
 
 
+    }
 
+    @Override
+    public void setBackgroundColor(int color) {
+        backgroundPaint.setColor(color);
+        invalidate();
+
+
+    }
+    public int getBackgroundColor(){
+        return backgroundPaint.getColor();
+    }
+    private RectF getActualTextWidth() {
+        int height;
+        String longestLine = getLongestLine();
+        int totalLines = message.split("\n").length;
+        totalLines = totalLines == 0 ? 1 : totalLines;
+        Paint.FontMetrics mtr = mPaintText.getFontMetrics();
+        height = (int) Math.abs(mtr.descent - mtr.ascent) * totalLines;
+        Path path = new Path();
+        mPaintText.getTextPath(longestLine, 0, longestLine.length(), (getWidth() / 2f), 0, path);
+        RectF rect = new RectF();
+        path.computeBounds(rect, true);
+        rect.bottom = height;
+        rect.left = rect.left -15;
+        rect.right = rect.right + 15;
+        rect.top = 0;
+        return rect;
 
     }
 

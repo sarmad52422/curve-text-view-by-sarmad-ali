@@ -213,7 +213,12 @@ public abstract class StickerView extends Sticker {
             return true;
         }
     };
+    public void setStickerSize(int width,int height){
+        innerViewContainer.getLayoutParams().width = width;
+        innerViewContainer.getLayoutParams().height = height;
+        innerViewContainer.requestLayout();
 
+    }
     public StickerView(Context context) {
         super(context);
         setClipChildren(false);

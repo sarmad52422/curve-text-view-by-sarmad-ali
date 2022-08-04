@@ -103,36 +103,36 @@ public class StickerTextView extends Sticker {
 
     }
     public int getBackgroundColor(){
-        return backgroundColor;
+        return tv_main.getBackgroundColor();
     }
     public Bitmap getMask(){
         return this.maskBitmap;
     }
-//    public StickerTextView(MagicTextView slogan) {
-//        super(slogan.getContext());
-//
-//        selectionWraperLayout = ((LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.selection_wrraper, this, false);
-//        setClipChildren(false);
-//
-//
-//        tv_main = new MagicTextView(slogan.getContext());
-//        tv_main.setTextSize(slogan.getTextSize());
-//        tv_main.setText(slogan.getText());
-//        tv_main.setTypeFace(slogan.getTypeFace());
-//        tv_main.setStroke(slogan.getStrokeWidth());
-//        tv_main.setStrokeColor(slogan.getStrokeColor());
-//        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-//        params.addRule(RelativeLayout.CENTER_IN_PARENT);
-//        ((RelativeLayout) selectionWraperLayout.findViewById(R.id.inner_layout)).addView(tv_main, params);
-//        selectionWraperLayout.findViewById(R.id.button_remove).setOnClickListener(view -> {
-//            ((ViewGroup) StickerTextView.this.getParent()).removeView(StickerTextView.this);
-//            stickerOperationListener.onStickerRemoved(StickerTextView.this);
-//        });
-//        selectionWraperLayout.findViewById(R.id.button_front).setOnClickListener(view -> StickerTextView.this.bringToFront());
-//        this.addView(selectionWraperLayout);
-//
-//
-//    }
+    public StickerTextView(MagicTextView slogan) {
+        super(slogan.getContext());
+
+        selectionWraperLayout = ((LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.selection_wrraper, this, false);
+        setClipChildren(false);
+
+
+        tv_main = new MagicTextView(slogan.getContext());
+        tv_main.setTextSize(slogan.getTextSize());
+        tv_main.setText(slogan.getText());
+        tv_main.setTypeFace(slogan.getTypeFace());
+        tv_main.setStroke(slogan.getStrokeWidth());
+        tv_main.setStrokeColor(slogan.getStrokeColor());
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        params.addRule(RelativeLayout.CENTER_IN_PARENT);
+        ((RelativeLayout) selectionWraperLayout.findViewById(R.id.inner_layout)).addView(tv_main, params);
+        selectionWraperLayout.findViewById(R.id.button_remove).setOnClickListener(view -> {
+            ((ViewGroup) StickerTextView.this.getParent()).removeView(StickerTextView.this);
+            stickerOperationListener.onStickerRemoved(StickerTextView.this);
+        });
+        selectionWraperLayout.findViewById(R.id.button_front).setOnClickListener(view -> StickerTextView.this.bringToFront());
+        this.addView(selectionWraperLayout);
+
+
+    }
 
     public void setTextAlignment(Paint.Align alignment) {
         tv_main.setTextAlignment(alignment);
@@ -159,7 +159,6 @@ public class StickerTextView extends Sticker {
 
     public void setBackgroundColor(int color) {
         tv_main.setBackgroundColor(color);
-        this.backgroundColor = color;
     }
 
     @Override

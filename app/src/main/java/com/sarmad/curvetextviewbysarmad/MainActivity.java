@@ -3,6 +3,7 @@ package com.sarmad.curvetextviewbysarmad;
 import androidx.appcompat.app.AppCompatActivity;
 
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
@@ -18,7 +19,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         StickerTextView textView = new StickerTextView(this);
         textView.setText("This is text");
-//        textView.setBackgroundColor();
+        textView.setBackgroundColor(Color.RED);
         ((LinearLayout)findViewById(R.id.sample_text_container)).addView(textView);
         ((SeekBar)findViewById(R.id.progress_curve_bar)).setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
