@@ -108,12 +108,13 @@ public class StickerTextView extends Sticker {
     public Bitmap getMask(){
         return this.maskBitmap;
     }
+
+
     public StickerTextView(MagicTextView slogan) {
         super(slogan.getContext());
 
         selectionWraperLayout = ((LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.selection_wrraper, this, false);
         setClipChildren(false);
-
 
         tv_main = new MagicTextView(slogan.getContext());
         tv_main.setTextSize(slogan.getTextSize());
@@ -130,6 +131,9 @@ public class StickerTextView extends Sticker {
         });
         selectionWraperLayout.findViewById(R.id.button_front).setOnClickListener(view -> StickerTextView.this.bringToFront());
         this.addView(selectionWraperLayout);
+        TextScaleTouchListener listener = new TextScaleTouchListener();
+        selectionWraperLayout.findViewById(R.id.button_scale).setOnTouchListener(listener);
+
 
 
     }
@@ -448,11 +452,13 @@ public class StickerTextView extends Sticker {
 
         public TextScaleTouchListener() {
 
+
             widthPixels = getContext().getResources().getDisplayMetrics().widthPixels;
         }
 
         @Override
         public boolean onTouch(View view, MotionEvent motionEvent) {
+            Log.e("STICKER TEXT VIEW","On Scale button pressed");
             switch (motionEvent.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     this.orgX = motionEvent.getX();
