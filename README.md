@@ -3,6 +3,6 @@
 put this in app.gradle
         
 ```
-implementation 'com.github.sarmad52422:curve-text-view-by-sarmad-ali:v2.2'
+implementation 'com.github.sarmad52422:curve-text-view-by-sarmad-ali:v2.2.1'
 
 ```
