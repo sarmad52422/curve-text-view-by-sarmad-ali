@@ -220,7 +220,7 @@ public class StickerImageView extends StickerView implements StickerView.ScaleCa
         else  // if setImageBitmap
             org = Bitmap.createBitmap(originalBitmap);
 
-        int strokeWidth = 13;
+        int strokeWidth = 18;
         try {
             Bitmap newStrokedBitmap = Bitmap.createBitmap(org.getWidth() + strokeWidth + 2, org.getHeight() + strokeWidth + 2, org.getConfig());
             Canvas canvas = new Canvas(newStrokedBitmap);
@@ -229,7 +229,6 @@ public class StickerImageView extends StickerView implements StickerView.ScaleCa
             Matrix matrix = new Matrix();
             Paint paint = new Paint();
             paint.setAntiAlias(true);
-
             matrix.setScale(scaleX, scaleY);
             canvas.drawBitmap(org, matrix, paint);
             canvas.drawColor(borderColor, PorterDuff.Mode.SRC_ATOP); //Color.WHITE is stroke color
@@ -262,12 +261,55 @@ public class StickerImageView extends StickerView implements StickerView.ScaleCa
         return ((BitmapDrawable) this.iv_main.getDrawable()).getBitmap();
     }
     public void setColorFilter(int color){
-        iv_main.setColorFilter(color);
+        originalBitmap = Bitmap.createBitmap(changeColor(originalBitmap,color));
+        this.iv_main.setImageBitmap(originalBitmap);
         this.colorFilter = color;
-        this.maskBitmap = null;
+//        this.maskBitmap = null;
 
     }
+    private Bitmap changeColor(Bitmap bitmap,
+                                     int newColor) {
+        if (bitmap == null) {
+            return bitmap;
+        }
 
+        int width = bitmap.getWidth();
+        int height = bitmap.getHeight();
+        int[] pixels = new int[width * height];
+        bitmap.getPixels(pixels, 0, width, 0, 0, width, height);
+        for (int x = 0; x < pixels.length; ++x) {
+            pixels[x] = (pixels[x] != Color.TRANSPARENT) ? newColor : pixels[x];
+        }
+        Bitmap newBitmap = Bitmap.createBitmap(width, height,
+                bitmap.getConfig());
+        newBitmap.setPixels(pixels, 0, width, 0, 0, width, height);
+        return newBitmap;
+    }
+//    public Bitmap colorize(Bitmap srcBmp, int dstColor) {
+//
+//        int width = srcBmp.getWidth();
+//        int height = srcBmp.getHeight();
+//
+//        float srcHSV[] = new float[3];
+//        float dstHSV[] = new float[3];
+//
+//        Bitmap dstBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+//
+//        for (int row = 0; row < height; row++) {
+//            for (int col = 0; col < width; col++) {
+//                int pixel = srcBmp.getPixel(col, row);
+//                int alpha = Color.alpha(pixel);
+//                Color.colorToHSV(pixel, srcHSV);
+//                Color.colorToHSV(dstColor, dstHSV);
+//
+//                // If it area to be painted set only value of original image
+//                dstHSV[2] = srcHSV[2];  // value
+//                dstBitmap.setPixel(col, row, Color.HSVToColor(alpha, dstHSV));
+//            }
+//        }
+//
+//        return dstBitmap;
+//    }
     @Override
     public View getImageView() {
         return iv_main;

@@ -205,7 +205,9 @@ public abstract class StickerView extends Sticker {
 
                         break;
                     case MotionEvent.ACTION_UP:
-                        Log.v(TAG, "iv_scale action up");
+                        getLayoutParams().width = innerViewContainer.getLayoutParams().width;
+                        getLayoutParams().height = innerViewContainer.getLayoutParams().height;
+                        requestLayout();
 
                         break;
                 }
